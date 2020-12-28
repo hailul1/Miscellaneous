@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+p {
+  border-bottom: 1px solid black; 
+}
+
+input {
+  width: 15%;
+}
+
+label {
+  width:200px;
+  display: inline-block;
+}
+
+.div {
+  background-color: moccasin;
+  width: 900px;
+  border: 1px solid black;
+  padding: 50px;
+  margin: 20px;
+}
+
+.space {
+  text-align: justify;
+}
+
+.center {
+background-color: moccasin;
+margin: auto;
+width: 50%;
+border: 1px solid black;
+padding: 10px;
+}
+
+
+.container {
+  width: 500px;
+  text-align: left;
+}
+
+.container input {
+  width: 50%;
+
+}
+
+
+table, th, td {
+  border: .5px ;
+  border-collapse: collapse;
+  padding: 5px;
+  text-align: center;
+
+}
+th {
+  
+  border-bottom: 1px dashed black;
+}
+
+</style>
+</head>
+<body>
+    
+<h1 style="text-align:center;">Car Loan Calculator</h1> <!--Header titles-->
+
+<h1 style="text-align:center;">Luwam Hailu</h1>
+
+<p> </p>
+
+<div class="center"> <!--Center textbox-->
+
+<form id = "info" onsubmit ="return false">
+  <div class="container">
+   	<label for="costamount">Car Cost Amount </label> 
+      <input id="costamount"> 
+      <br>
+      <label for="downpay">Down Payment</label>
+      <input id="downpay" >
+      <br>
+    <label for="anintrate">Annual Interest Rate</label>
+      <input id="anintrate" >
+      <br>
+      <label for="termlength">Term (In years) (1-6)</label>
+      <input id="termlength" >
+      <br>
+      <button onclick="button1()">Press to calculate auto loan information</button> <!--Begin calculations when form submitted-->
+      <br>
+      <button onclick="button2()">Reset</button> <!--Reset form when requested-->
+      <br>
+      <p></p>
+      <label>Monthly Payment: </label>
+      <span id="myText"></span> 
+      <br>
+      <label>Total Payments: </label>
+      <span id="Text"></span>
+      <br>
+    </div>
+</form>
+
+<table id="schedule" align=justified > <!--Table to hold payment schedule-->
+    <tr>
+    <th>Car Payment Number</th>
+    <th>Interest</th>
+    <th>Principal</th>
+    <th>Balance</th>
+  </tr>
+</table> 
+
+<br> 
+
+</div>
+
+
+
+<script>
+  function button1() {
+    var a = document.getElementById("costamount").value; //Store car cost amount
+    var b = document.getElementById("downpay").value;    //Store down payment amount
+    var c = document.getElementById("anintrate").value;  //Store annual interest rate value
+    var d = document.getElementById("termlength").value;  //Store term length value
+    if (isNaN(a)) {
+         alert("Error. The cost amount does not appear to be a valid number"); //Output error message if car cost invalid
+      }
+      else if (isNaN(b)) {
+        alert("Error. The down payment does not appear to be a valid number"); //Output error message if down payment invalid
+      }
+      else if (isNaN(c)) {
+        alert("Error. The annual interest rate does not appear to be a valid number"); //Output error message if interest rate invalid
+      }
+      else if (isNaN(d)) {
+        alert("Error. The term length does not appear to be a valid number"); //Output error message if term length invalid
+      }
+      else if ( c < 0 || c > 15) {
+        alert("Error. The annual interest rate must be within range of 0 and 15"); //Output error message if interest rate out of range
+      }
+      else if (d < 2 || d > 5) {
+        alert("Error. The term length must be between 1 and 6 years"); //Output error message if term length out of range
+      }
+      else if ( (a-b) > 500000) {
+        alert("Error. The loan amount does not appear to be a valid number. Please try again."); //Output error message if loan amount out of range
+      }
+      else { // Calculate payment = amount *  ((irate*(1+irate)^term)/((1+irate)^term-1.0))
+        var loan, interest, monthly;
+        c=c*.01; //decimal of interest rate percentage
+        loan=a-b; //total loan equals cost minus down payment
+        var num = c/12; //interest rate divided by payments per year
+        num = num * loan; // loan amount * (interest rate/payments per year)
+        var denom = c/12; //interest rate divided by payments per year
+        denom = 1 +denom;
+        var l = d * (-12);
+        denom = Math.pow(denom, l); 
+        denom = 1 - denom;
+        monthly = num / denom;
+        var r = monthly.toFixed(2);  //Show two decimal places to the right
+        var q = monthly*(d*12.0);
+        var f = q.toFixed(2);      //Show two decimal places to the right
+        var balance = loan;
+        document.getElementById("myText").innerHTML = "$" + r; //Output monthly payment
+        document.getElementById("Text").innerHTML = "$" + f; //Output total payment amount
+       var MyTable = document.getElementById("schedule");   //Acess table for payment schedule
+       var carpayno =0;
+       var a, w, b, bal, e, principle;  //Initialize various variable for use in table loop
+            for(i = 0; i < d*12; i++) {
+              a = (c/12)*balance; // interest payment for current month
+              balance = balance - (monthly - a); //Update current balance, which reflects payments made
+              carpayno = carpayno+1; //Increment car payment counter
+              e = monthly - a;     //Determine principle paid (amount paid towards loan monthly bill minus interest fee)
+              if(balance < 0.000001) {
+              	balance = 0;
+              }
+            var NewRow = schedule.insertRow(i+1); 	//Insert monthly payment
+            var Newcell1 = NewRow.insertCell(0); 	//Month #
+            var Newcell2 = NewRow.insertCell(1);  	// Interest paid in given month
+            var Newcell3 = NewRow.insertCell(2); 	// Priniciple paid in given month
+            var Newcell4 = NewRow.insertCell(3); 	//Remaining loan blance, not including interest
+            Newcell1.innerHTML = carpayno; 
+            Newcell2.innerHTML = "$" + a.toFixed(2); 
+            Newcell3.innerHTML = "$" + e.toFixed(2); 
+            Newcell4.innerHTML = "$" + balance.toFixed(2); 
+            
+            }
+            
+      }
+  }
+</script>
+
+<script>
+  function button2() {
+    var table = document.getElementById("schedule"); 	//Access payment schedule table
+    for(var i = table.rows.length - 1; i > 0; i--)		//Reset and remove all rows from table
+      {
+        table.deleteRow(i);
+      }
+    document.getElementById("myText").innerHTML = "";	//Reset monthly payment value
+    document.getElementById("Text").innerHTML = "";		//Reset total payment value
+    document.getElementById("info").reset();			//Reset form values
+  }
+</script>
+
+</body>
+
+</html>
